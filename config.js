@@ -1,7 +1,13 @@
 // DRVU Secure Exam - settings. Edit only this file.
-// Firebase console > Project settings > General > "Web API Key"
-// Firebase console > Realtime Database > Data tab > the address at the top (no slash at the end)
-window.DRVU_CONFIG={
-  apiKey:'AIzaSy...your-key...',
-  databaseURL:'https://dembidolloo-1c0da-default-rtdb.firebaseio.com/'
+// In Firebase: Project settings (gear) > General > Your apps > Web app > SDK setup and configuration > "Config".
+// Copy the values Firebase shows you and paste them between the quotes below.
+// Only apiKey and databaseURL (or projectId) are needed.
+window.DRVU_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 };
