@@ -3,5 +3,5 @@
 // Firebase console > Realtime Database > Data tab > the address at the top (no slash at the end)
 window.DRVU_CONFIG={
   apiKey:'AIzaSy...your-key...',
-  databaseURL:'https://drvu-exam-default-rtdb.firebaseio.com'
+  databaseURL:'https://dembidolloo-1c0da-default-rtdb.firebaseio.com/'
 };
