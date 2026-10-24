@@ -1,0 +1,51 @@
+DRVU SECURE ONLINE EXAM - SETUP (about 10 minutes)        Prepared by Daba Atm
+
+FILES (upload these 5 to GitHub, top level, lowercase names):
+  index.html  style.css  script.js  config.js  (database.rules.json and this file are for you only)
+
+A. CREATE THE FIREBASE PROJECT
+ 1. console.firebase.google.com > Create a project.
+ 2. Build > Authentication > Get started > Sign-in method > Email/Password > Enable > Save.
+ 3. Authentication > Users > Add user:
+        Email:    admin@drvu.exam          (exactly this)
+        Password: choose a strong password (this is the admin password)
+    DO THIS BEFORE ANYTHING ELSE so nobody else can take the admin address.
+ 4. Build > Realtime Database > Create database (any location) > start in locked mode.
+ 5. Realtime Database > Rules tab > delete everything > paste the whole text of
+    database.rules.json > Publish.
+ 6. Project settings (gear) > General > "Web API Key"  -> copy it.
+    Realtime Database > Data tab > copy the address at the top (https://....firebaseio.com or ...firebasedatabase.app).
+
+B. CONFIGURE
+ 7. Open config.js and paste both values between the quotes:
+        apiKey:'AIza....',
+        databaseURL:'https://xxxx-default-rtdb.firebaseio.com'
+ 8. Upload the 5 files to your GitHub repository (Settings > Pages > main / root).
+
+C. FIRST USE
+ 9. Open the site. Username: admin   Password: the one from step 3.
+10. Exam setup: upload the PDF (or paste text), check the correct answers, set the time, set status Open,
+    press "Save exam to server".
+11. Students tab: register students (username + password of at least 6 characters). Give them their details.
+12. Students open the same link on any device. After they submit, the Results tab grades them
+    (keep the admin page open during the exam; it grades automatically every 20 seconds, or press
+    "Refresh and grade"). Students then see their score.
+
+WHAT THE RULES ENFORCE ON THE SERVER
+ - Only the admin can read passwords, the answer key, all results, or change anything.
+ - A student can read only their own data, and can read the questions only after pressing Start.
+ - The start time comes from the server clock; answers and the final submission are refused after
+   the time limit (30 s / 60 s grace).
+ - A student can submit once; they cannot write their own score.
+ - The answer key is never sent to students until their result is graded and "show answers" is on.
+
+TEST THE RULES (recommended before the real exam)
+ Realtime Database > Rules > Rules Playground: try a read of /private as an authenticated student
+ (must be denied) and a read of /exam/questions before starting (must be denied).
+ Then run a full test with two test students on two phones.
+
+LIMITS
+ - Grading happens when the admin page is open (no server code is used). Results appear to students
+   shortly after the admin page grades them.
+ - Admin can see student passwords (needed to hand them out and to reset them).
+ - Keep the API key restricted to your GitHub site if you wish (Google Cloud > Credentials > HTTP referrers).

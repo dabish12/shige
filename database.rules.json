@@ -1,0 +1,57 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "exam": {
+      "meta": {
+        ".read": "auth != null",
+        ".write": "auth.token.email === 'admin@drvu.exam'"
+      },
+      "questions": {
+        ".read": "auth.token.email === 'admin@drvu.exam' || (auth != null && root.child('progress').child(auth.uid).child('start').exists())",
+        ".write": "auth.token.email === 'admin@drvu.exam'"
+      }
+    },
+    "key": {
+      ".read": "auth.token.email === 'admin@drvu.exam' || (auth != null && root.child('exam').child('meta').child('showAns').val() === true && root.child('results').child(auth.uid).child('score').exists())",
+      ".write": "auth.token.email === 'admin@drvu.exam'"
+    },
+    "students": {
+      ".read": "auth.token.email === 'admin@drvu.exam'",
+      ".write": "auth.token.email === 'admin@drvu.exam'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
+    },
+    "private": {
+      ".read": "auth.token.email === 'admin@drvu.exam'",
+      ".write": "auth.token.email === 'admin@drvu.exam'"
+    },
+    "progress": {
+      ".read": "auth.token.email === 'admin@drvu.exam'",
+      ".write": "auth.token.email === 'admin@drvu.exam'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "start": {
+          ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.val() === now && root.child('students').child($uid).exists() && root.child('exam').child('meta').child('open').val() === true && !root.child('results').child($uid).exists()"
+        },
+        "ping": {
+          ".write": "auth != null && auth.uid === $uid && newData.val() === now"
+        },
+        "ans": {
+          ".write": "auth != null && auth.uid === $uid && !root.child('results').child($uid).exists() && root.child('progress').child($uid).child('start').exists() && now < root.child('progress').child($uid).child('start').val() + root.child('exam').child('meta').child('duration').val() * 60000 + 30000",
+          ".validate": "newData.isString() && newData.val().length < 20000"
+        }
+      }
+    },
+    "results": {
+      ".read": "auth.token.email === 'admin@drvu.exam'",
+      ".write": "auth.token.email === 'admin@drvu.exam'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !data.exists() && !newData.child('score').exists() && newData.child('submitted').val() === now && root.child('progress').child($uid).child('start').exists() && now < root.child('progress').child($uid).child('start').val() + root.child('exam').child('meta').child('duration').val() * 60000 + 60000",
+        ".validate": "newData.hasChildren(['ans', 'submitted']) && newData.child('ans').isString() && newData.child('ans').val().length < 20000"
+      }
+    }
+  }
+}
