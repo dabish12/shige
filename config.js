@@ -4,5 +4,5 @@
 //   databaseURL : Firebase > Realtime Database > Data tab > the address at the top (no slash at the end)
 window.DRVU_CONFIG = {
   apiKey: "AIzaSyDQd4p_VFRplnid0r3UdSBAKyIIS9zWJk0",
-  databaseURL: "https://console.firebase.google.com/project/dembi-aded9/database/dembi-aded9-default-rtdb/data/~2F"
+  databaseURL: "https://console.firebase.google.com/project/dembiiiiii/database/dembiiiiii-default-rtdb/data/~2F"
 };
