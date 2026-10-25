@@ -2,7 +2,11 @@
 window.onerror=function(m,s,l){var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#b3261e;color:#fff;padding:10px;text-align:center;z-index:99;font:14px sans-serif';d.textContent='Error: '+m+' (line '+l+')';document.body.appendChild(d)};
 const $=s=>document.querySelector(s),A=$('#app');
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const C=window.DRVU_CONFIG||window.firebaseConfig||{},clean=s=>String(s||'').replace(/[\s"'`,]/g,''),KEY=clean(C.apiKey),DB=(clean(C.databaseURL)||(clean(C.projectId)?'https://'+clean(C.projectId)+'-default-rtdb.firebaseio.com':'')).replace(/\/+$/,'').replace(/\.json$/,''),MAIL='@drvu.exam',ADMIN='admin'+MAIL;
+const clean=s=>String(s||'').replace(/[\s"'`,]/g,''),MAIL='@drvu.exam',ADMIN='admin'+MAIL;
+let KEY='',DB='';
+function setCfg(C){KEY=clean(C.apiKey);DB=(clean(C.databaseURL)||(clean(C.projectId)?'https://'+clean(C.projectId)+'-default-rtdb.firebaseio.com':'')).replace(/\/+$/,'').replace(/\.json$/,'')}
+setCfg(window.DRVU_CONFIG||(typeof firebaseConfig!=='undefined'?firebaseConfig:{}));
+async function init(){if(!KEY||!DB){try{const t=await(await fetch('config.js?t='+Date.now(),{cache:'no-store'})).text(),g=k=>{const x=t.match(new RegExp(k+'\\s*[:=]\\s*["\']([^"\']*)["\']'));return x?x[1]:''};setCfg({apiKey:g('apiKey'),databaseURL:g('databaseURL'),projectId:g('projectId')})}catch(e){}}loginView()}
 let S=null,G={},St={},tab='st',detU=null,tick=null,skew=0,poll=null;
 
 /* ---------- Firebase REST helpers ---------- */
@@ -28,7 +32,7 @@ function busy(m){A.innerHTML=`<div class="shell"><section><div class="body"><div
 function loginView(m,uv){const bad=!KEY||!DB;
  A.innerHTML=`<div class="split"><div class="hero"><div class="hc">${LOGO}<h1>Dembi Dollo Rift Valley University</h1><p>Online Mid Exam Portal</p><span class="tag">Computer and Mobile Application</span></div></div><div class="fm"><div class="fb"><h2>Welcome back</h2><p class="mu">Sign in to continue to your exam portal.</p>
 <label>Username</label><input id="u" value="${esc(uv||'')}" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Enter username"><label>Password</label><input id="p" type="password" autocomplete="current-password" placeholder="Enter password">
-<p class="no">${m||''}${bad?'The system is not configured. Open config.js and add the Firebase apiKey and databaseURL.':!/^AIza[\w-]{30,}$/.test(KEY)?'The apiKey in config.js does not look like a Firebase Web API Key (it should start with AIza).':''}</p><button class="wide" onclick="login()">Sign in</button>
+<p class="no">${m||''}${bad?'The system is not configured. Found in config.js: apiKey '+(KEY?'yes':'MISSING')+', databaseURL '+(DB?'yes':'MISSING')+'. Put your Firebase values between the quotes in config.js (remove any “import” lines), upload it to GitHub, wait 2 minutes and press Ctrl+F5.':!/^AIza[\w-]{30,}$/.test(KEY)?'The apiKey in config.js does not look like a Firebase Web API Key (it should start with AIza).':''}</p><button class="wide" onclick="login()">Sign in</button>
 <p class="mu" style="margin-top:14px">Students: use the account given by your exam administrator.</p><p id="cs" class="mu"></p><footer>Prepared by <b>Daba Atm</b></footer></div></div></div>`;
  $('#p').onkeydown=e=>{if(e.key==='Enter')login()};chk()}
 const errMsg=e=>/API key not valid|API_KEY_INVALID|API_KEY_SERVICE_BLOCKED/i.test(e.message)?'The apiKey in config.js is not valid. Copy the “Web API Key” from Firebase → Project settings → General (it starts with AIza), with no spaces.':/referer|REFERRER|HTTP_REFERRER/i.test(e.message)?'This API key is restricted and blocks this website. In Google Cloud → Credentials → your key, add your GitHub site to the allowed websites, or remove the restriction.':/has not been used|is disabled|SERVICE_DISABLED/i.test(e.message)?'The Identity Toolkit API is disabled for this project. Enable “Identity Toolkit API” in Google Cloud → APIs & Services.':/CONFIGURATION_NOT_FOUND|OPERATION_NOT_ALLOWED/.test(e.message)?'Email/Password sign-in is not turned on. In Firebase → Authentication → Sign-in method, enable Email/Password.':/INVALID_LOGIN|INVALID_PASSWORD|EMAIL_NOT_FOUND|INVALID_EMAIL/.test(e.message)?'Wrong username or password.':/TOO_MANY/.test(e.message)?'Too many attempts. Wait a few minutes and try again.':/USER_DISABLED/.test(e.message)?'This account is disabled.':/NETWORK|Failed to fetch/.test(e.message)?'Cannot connect. Check your internet connection.':/API_KEY/.test(e.message)?'The apiKey in config.js is wrong.':'Error: '+esc(e.message);
@@ -134,4 +138,4 @@ function timer(){clearInterval(tick);const end=St.pr.start+St.meta.duration*6000
  const t=()=>{const l=end-(Date.now()+skew);if(l<=0){clearInterval(tick);alert('Time is up. Your exam is being submitted.');return submitEx()}const s=Math.ceil(l/1000);const e=$('#tl');if(e)e.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};t();tick=setInterval(t,500)}
 async function submitEx(){clearInterval(tick);try{await sv.catch(()=>{});await db('results/'+S.uid,'PUT',{ans:JSON.stringify(St.ans),submitted:{'.sv':'timestamp'}});St.res=await db('results/'+S.uid);studentView()}
  catch(e){alert('Submission failed ('+e.message+'). Check your internet. If the time is over, tell your exam administrator.');timer()}}
-loginView();
+init();
