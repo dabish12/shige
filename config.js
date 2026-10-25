@@ -4,5 +4,11 @@
 //   databaseURL : Firebase > Realtime Database > Data tab > the address at the top (no slash at the end)
 window.DRVU_CONFIG = {
   apiKey: "AIzaSyBPbYcQdKSYluBwk23llSa9wFwR7tUXtcw",
-  databaseURL: "https://console.firebase.google.com/project/dembiiiiii/database/dembiiiiii-default-rtdb/data/~2F"
+  authDomain: "dembiiiiii.firebaseapp.com",
+  databaseURL: "https://dembiiiiii-default-rtdb.firebaseio.com",
+  projectId: "dembiiiiii",
+  storageBucket: "dembiiiiii.firebasestorage.app",
+  messagingSenderId: "564365038958",
+  appId: "1:564365038958:web:04349102afc0934ba55d7f",
+  measurementId: "G-XSR7SYNHKC"
 };
